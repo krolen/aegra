@@ -2,7 +2,7 @@ services:
 
   # Aegra Server
   aegra:
-    image: kkullagin/aegra:latest
+    image: kkulagin/aegra:latest
     restart: unless-stopped
     ports:
       - "${PORT:-2026}:${PORT:-2026}"
@@ -12,7 +12,7 @@ services:
       - DEBUG=${DEBUG:-false}
       - AEGRA_CONFIG=${AEGRA_CONFIG:-aegra.json}
       - POSTGRES_DB=${POSTGRES_DB:-aegra}
-      - POSTGRES_HOST=${POSTGRES_HOST:-db}
+      - POSTGRES_HOST=${POSTGRES_HOST:-192.168.0.100}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
       - POSTGRES_USER=${POSTGRES_USER:-aegra_user}
