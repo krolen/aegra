@@ -2,26 +2,39 @@ services:
 
   # Aegra Server
   aegra:
-    build:
-      context: .
-      dockerfile: deployments/docker/Dockerfile
+    # TODO: Replace <your-dockerhub-username> with your actual Docker Hub username
+    image: kkullagin/aegra:latest
     restart: unless-stopped
     ports:
       - "${PORT:-2026}:${PORT:-2026}"
-    env_file:
-      - .env
     environment:
-      - POSTGRES_HOST=postgres
+      - PROJECT_NAME=${PROJECT_NAME:-Aegra}
+      - VERSION=${VERSION:-"0.1.0"}
+      - DEBUG=${DEBUG:-true}
+      - AEGRA_CONFIG=${AEGRA_CONFIG:-aegra.json}
+      - HOST=${HOST:-0.0.0.0}
+      - PORT=${PORT:-2026}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENV_MODE=${ENV_MODE:-LOCAL}
+      - LOG_VERBOSITY=${LOG_VERBOSITY:-standard}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-sk-...}
+      - OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME:-aegra-backend}
+      - OTEL_TARGETS=${OTEL_TARGETS:-""}
+      - OTEL_CONSOLE_EXPORT=${OTEL_CONSOLE_EXPORT:-false}
+      - LANGFUSE_BASE_URL=${LANGFUSE_BASE_URL:-https://cloud.langfuse.com}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-pk-...}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY:-sk-...}
+      - PHOENIX_COLLECTOR_ENDPOINT=${PHOENIX_COLLECTOR_ENDPOINT:-http://127.0.0.1:6006/v1/traces}
+      - PHOENIX_API_KEY=${PHOENIX_API_KEY:-}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      - OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS:-}
+      - AUTH_TYPE=${AUTH_TYPE:-noop}
       - PYTHONPATH=/app/src
-    depends_on:
-      postgres:
-        condition: service_healthy
     volumes:
       - ./aegra.json:/app/aegra.json:ro
       - ./examples:/app/examples:ro
-      - ./libs/aegra-api/src:/app/src:ro  # Mount full src for PYTHONPATH to work
-      - ./libs/aegra-api/alembic:/app/alembic:ro # for migrations
-      - ./.env:/app/.env:ro
+      - ./libs/aegra-api/src:/app/src:ro
+      - ./libs/aegra-api/alembic:/app/alembic:ro
     command: >
       sh -c "
         echo 'Running database migrations...' &&
