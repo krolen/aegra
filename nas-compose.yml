@@ -1,0 +1,31 @@
+services:
+
+  # Aegra Server
+  aegra:
+    build:
+      context: .
+      dockerfile: deployments/docker/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${PORT:-2026}:${PORT:-2026}"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=postgres
+      - PYTHONPATH=/app/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./aegra.json:/app/aegra.json:ro
+      - ./examples:/app/examples:ro
+      - ./libs/aegra-api/src:/app/src:ro  # Mount full src for PYTHONPATH to work
+      - ./libs/aegra-api/alembic:/app/alembic:ro # for migrations
+      - ./.env:/app/.env:ro
+    command: >
+      sh -c "
+        echo 'Running database migrations...' &&
+        alembic upgrade head &&
+        echo 'Starting Aegra server...' &&
+        uvicorn aegra_api.main:app --host 0.0.0.0 --port $${PORT:-2026} --reload
+      "
