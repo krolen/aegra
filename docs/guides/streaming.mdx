@@ -183,6 +183,8 @@ async for chunk in client.runs.stream(
 | `"cancel"` (default) | Cancel the run when client disconnects |
 | `"continue"` | Run continues in the background; reconnect later to get results |
 
+The server sends SSE keepalive comments (`: heartbeat`) every `KEEPALIVE_INTERVAL_SECS` (default 5s, truncated to whole seconds, minimum 1s), so idle proxies (Nginx 60s, AWS ALB, Cloudflare) won't drop long-running silent agents — for example, a graph node holding an upstream WebSocket without emitting events. The wire-format matches LangGraph Platform, so existing SSE clients (the LangGraph SDK, browser `EventSource`, `httpx-sse`) silently ignore these lines per the W3C spec. Only a real client disconnect — not an idle proxy timeout — triggers automatic cancellation.
+
 ## Background runs
 
 For long-running tasks, you can create a run in the background and check on it later:
@@ -222,10 +224,14 @@ await client.runs.cancel(
 
 ## SSE reconnection
 
-Aegra stores streaming events in the database for replay. If your connection drops:
+Aegra stores streaming events in a replay buffer (Redis Lists when `REDIS_BROKER_ENABLED=true`, in-memory list in dev mode) for replay. If your connection drops:
 
 1. Track the last event ID you received
 2. Reconnect to `GET /threads/{thread_id}/runs/{run_id}/stream` with `Last-Event-ID` header
 3. You'll receive all events from where you left off
 
 Events are retained for 1 hour after the run completes.
+
+<Note>
+  In production deployments, SSE events are delivered via Redis pub/sub from workers — the client's SSE connection and the worker executing the run can be on different instances. See the [worker architecture guide](/guides/worker-architecture) for details on how this works.
+</Note>

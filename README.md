@@ -11,13 +11,13 @@
 <p align="center">
   <a href="https://pypi.org/project/aegra-api/"><img src="https://img.shields.io/pypi/v/aegra-api?label=aegra-api&color=blue" alt="PyPI API"></a>
   <a href="https://pypi.org/project/aegra-cli/"><img src="https://img.shields.io/pypi/v/aegra-cli?label=aegra-cli&color=blue" alt="PyPI CLI"></a>
-  <a href="https://github.com/ibbybuilds/aegra/actions/workflows/ci.yml"><img src="https://github.com/ibbybuilds/aegra/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://app.codecov.io/gh/ibbybuilds/aegra"><img src="https://codecov.io/gh/ibbybuilds/aegra/graph/badge.svg" alt="Codecov"></a>
+  <a href="https://github.com/aegra/aegra/actions/workflows/ci.yml"><img src="https://github.com/aegra/aegra/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://app.codecov.io/gh/aegra/aegra"><img src="https://codecov.io/gh/aegra/aegra/graph/badge.svg" alt="Codecov"></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/ibbybuilds/aegra/stargazers"><img src="https://img.shields.io/github/stars/ibbybuilds/aegra" alt="GitHub stars"></a>
-  <a href="https://github.com/ibbybuilds/aegra/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ibbybuilds/aegra" alt="License"></a>
+  <a href="https://github.com/aegra/aegra/stargazers"><img src="https://img.shields.io/github/stars/aegra/aegra" alt="GitHub stars"></a>
+  <a href="https://github.com/aegra/aegra/blob/main/LICENSE"><img src="https://img.shields.io/github/license/aegra/aegra" alt="License"></a>
   <a href="https://discord.com/invite/D5M3ZPS25e"><img src="https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://patreon.com/aegra"><img src="https://img.shields.io/badge/Sponsor-EA4AAA?logo=github-sponsors&logoColor=white" alt="Sponsor"></a>
 </p>
@@ -32,7 +32,7 @@ Aegra is a drop-in replacement for LangSmith Deployments. Use the same LangGraph
 
 ### Using the CLI (Recommended)
 
-**Prerequisites:** Python 3.11+, Docker (for PostgreSQL)
+**Prerequisites:** Python 3.12+, Docker (for PostgreSQL)
 
 ```bash
 pip install aegra-cli
@@ -52,7 +52,7 @@ uv run aegra dev         # Start PostgreSQL + dev server
 ### From Source
 
 ```bash
-git clone https://github.com/ibbybuilds/aegra.git
+git clone https://github.com/aegra/aegra.git
 cd aegra
 cp .env.example .env
 # Add your OPENAI_API_KEY to .env
@@ -97,8 +97,9 @@ async for chunk in client.runs.stream(
 ## ✨ Features
 
 - **[Agent Protocol](https://github.com/langchain-ai/agent-protocol) compliant** - Works with Agent Chat UI, LangGraph Studio, CopilotKit
+- **[Worker architecture](https://docs.aegra.dev/guides/worker-architecture)** - Redis job queue with 30 concurrent runs per instance, lease-based crash recovery, and horizontal scaling across multiple instances
 - **[Human-in-the-loop](https://docs.aegra.dev/guides/human-in-the-loop)** - Approval gates and user intervention points
-- **[Streaming](https://docs.aegra.dev/guides/streaming)** - Real-time responses with network resilience
+- **[Streaming](https://docs.aegra.dev/guides/streaming)** - Real-time SSE streaming with cross-instance pub/sub and automatic reconnection with event replay
 - **[Persistent state](https://docs.aegra.dev/guides/threads-and-state)** - PostgreSQL checkpoints via LangGraph
 - **[Configurable auth](https://docs.aegra.dev/guides/authentication)** - JWT, OAuth, Firebase, or none
 - **[Unified Observability](https://docs.aegra.dev/guides/observability)** - Fan-out tracing support via OpenTelemetry
@@ -128,6 +129,7 @@ aegra version           # Show version info
 | [Quickstart](https://docs.aegra.dev/quickstart) | Get a running server in under 5 minutes |
 | [Configuration](https://docs.aegra.dev/reference/configuration) | aegra.json format and all options |
 | [Authentication](https://docs.aegra.dev/guides/authentication) | JWT, OAuth, Firebase, or custom auth handlers |
+| [Worker Architecture](https://docs.aegra.dev/guides/worker-architecture) | Redis job queue, crash recovery, horizontal scaling |
 | [Streaming](https://docs.aegra.dev/guides/streaming) | 8 SSE stream modes with reconnection |
 | [Store](https://docs.aegra.dev/guides/store) | Key-value and semantic search storage |
 | [Observability](https://docs.aegra.dev/guides/observability) | Fan-out tracing to Langfuse, Phoenix, or any OTLP backend |
@@ -137,20 +139,21 @@ aegra version           # Show version info
 ## 💬 Community & Support
 
 - **[Discord](https://discord.com/invite/D5M3ZPS25e)** - Chat with the community
-- **[GitHub Discussions](https://github.com/ibbybuilds/aegra/discussions)** - Ask questions, share ideas
-- **[GitHub Issues](https://github.com/ibbybuilds/aegra/issues)** - Report bugs
+- **[GitHub Discussions](https://github.com/aegra/aegra/discussions)** - Ask questions, share ideas
+- **[GitHub Issues](https://github.com/aegra/aegra/issues)** - Report bugs
 
 ## 🏗️ Built With
 
 - [FastAPI](https://fastapi.tiangolo.com/) - HTTP layer
 - [LangGraph](https://github.com/langchain-ai/langgraph) - State management & graph execution
 - [PostgreSQL](https://www.postgresql.org/) - Persistence & checkpoints
+- [Redis](https://redis.io/) - Job queue, SSE pub/sub, crash recovery
 - [OpenTelemetry](https://opentelemetry.io/) - Observability standard
 - [pgvector](https://github.com/pgvector/pgvector) - Vector embeddings
 
 ## 🤝 Contributing
 
-We welcome contributions! See [Contributing guide](https://docs.aegra.dev/guides/contributing) and check out [good first issues](https://github.com/ibbybuilds/aegra/labels/good%20first%20issue).
+We welcome contributions! See [Contributing guide](https://docs.aegra.dev/guides/contributing) and check out [good first issues](https://github.com/aegra/aegra/labels/good%20first%20issue).
 
 ## 💖 Support the Project
 
@@ -168,10 +171,10 @@ Apache 2.0 - see [LICENSE](LICENSE).
   <strong>⭐ Star us if Aegra helps you escape vendor lock-in ⭐</strong>
 </p>
 
-<a href="https://www.star-history.com/#ibbybuilds/aegra&Date">
+<a href="https://www.star-history.com/#aegra/aegra&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ibbybuilds/aegra&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ibbybuilds/aegra&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=ibbybuilds/aegra&type=Date" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=aegra/aegra&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=aegra/aegra&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=aegra/aegra&type=Date" />
   </picture>
 </a>
